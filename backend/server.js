@@ -90,6 +90,7 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middleware
+app.set('trust proxy', true); // Trust Railway's proxy
 app.use(helmet());
 app.use(cors({
   origin: [
@@ -180,7 +181,7 @@ const createTransporter = () => {
   
   if (smtpProvider === 'smtp2go') {
     console.log('Using SMTP2GO for email delivery');
-    return nodemailer.createTransporter({
+    return nodemailer.createTransport({
       host: 'mail.smtp2go.com',
       port: 587,
       secure: false,
