@@ -175,9 +175,9 @@ const createTransporter = () => {
     throw new Error('EMAIL_PASS environment variable is not set');
   }
   
-  return nodemailer.createTransport({
-    service: 'gmail',
-    host: 'smtp.gmail.com',
+  // Alternative SMTP configuration for better cloud compatibility
+  return nodemailer.createTransporter({
+    host: 'smtp-relay.gmail.com',
     port: 587,
     secure: false,
     auth: {
@@ -185,13 +185,16 @@ const createTransporter = () => {
       pass: emailPass
     },
     tls: {
-      rejectUnauthorized: false
+      rejectUnauthorized: false,
+      ciphers: 'SSLv3'
     },
     connectionTimeout: 60000,
     greetingTimeout: 30000,
     socketTimeout: 60000,
     debug: true,
-    logger: true
+    logger: true,
+    pool: true,
+    maxConnections: 1
   });
 };
 
