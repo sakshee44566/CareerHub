@@ -176,6 +176,7 @@ const createTransporter = () => {
   }
   
   return nodemailer.createTransport({
+    service: 'gmail',
     host: 'smtp.gmail.com',
     port: 587,
     secure: false,
@@ -185,7 +186,12 @@ const createTransporter = () => {
     },
     tls: {
       rejectUnauthorized: false
-    }
+    },
+    connectionTimeout: 60000,
+    greetingTimeout: 30000,
+    socketTimeout: 60000,
+    debug: true,
+    logger: true
   });
 };
 
@@ -358,11 +364,30 @@ app.post('/api/contact', emailLimiter, async (req, res) => {
       `
     };
     
-    await transporter.sendMail(mailOptions);
+    // Set a timeout for the email sending
+    const sendEmailWithTimeout = () => {
+      return Promise.race([
+        transporter.sendMail(mailOptions),
+        new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Email timeout after 30 seconds')), 30000)
+        )
+      ]);
+    };
+
+    await sendEmailWithTimeout();
+    console.log('Email sent successfully to:', mailOptions.to);
     res.json({ message: 'Message sent successfully' });
   } catch (error) {
-    console.error('Email error:', error);
-    res.status(500).json({ error: 'Failed to send message' });
+    console.error('Email error details:', {
+      message: error.message,
+      code: error.code,
+      command: error.command,
+      response: error.response
+    });
+    res.status(500).json({ 
+      error: 'Failed to send message', 
+      details: error.message 
+    });
   }
 });
 
