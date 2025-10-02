@@ -175,9 +175,32 @@ const createTransporter = () => {
     throw new Error('EMAIL_PASS environment variable is not set');
   }
   
-  // Alternative SMTP configuration for better cloud compatibility
+  // Use SMTP2GO for reliable cloud-based email delivery
+  const smtpProvider = process.env.SMTP_PROVIDER || 'gmail';
+  
+  if (smtpProvider === 'smtp2go') {
+    console.log('Using SMTP2GO for email delivery');
+    return nodemailer.createTransporter({
+      host: 'mail.smtp2go.com',
+      port: 587,
+      secure: false,
+      auth: {
+        user: process.env.SMTP2GO_USER || emailUser,
+        pass: process.env.SMTP2GO_PASS || emailPass
+      },
+      tls: {
+        rejectUnauthorized: false
+      },
+      connectionTimeout: 30000,
+      greetingTimeout: 30000,
+      socketTimeout: 30000
+    });
+  }
+  
+  // Fallback to Gmail (will likely timeout on Railway)
+  console.log('Using Gmail SMTP (may timeout on Railway)');
   return nodemailer.createTransporter({
-    host: 'smtp-relay.gmail.com',
+    host: 'smtp.gmail.com',
     port: 587,
     secure: false,
     auth: {
@@ -185,16 +208,11 @@ const createTransporter = () => {
       pass: emailPass
     },
     tls: {
-      rejectUnauthorized: false,
-      ciphers: 'SSLv3'
+      rejectUnauthorized: false
     },
-    connectionTimeout: 60000,
+    connectionTimeout: 30000,
     greetingTimeout: 30000,
-    socketTimeout: 60000,
-    debug: true,
-    logger: true,
-    pool: true,
-    maxConnections: 1
+    socketTimeout: 30000
   });
 };
 
