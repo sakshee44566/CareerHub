@@ -98,7 +98,8 @@ app.use(cors({
     'http://localhost:5173',
     'http://127.0.0.1:5173',
     'http://localhost:8080',
-    'http://127.0.0.1:8080'
+    'http://127.0.0.1:8080',
+    'https://animated-moonbeam-a6d4b0.netlify.app'
   ],
   methods: ['GET','POST','PUT','DELETE','OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
