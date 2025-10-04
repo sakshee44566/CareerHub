@@ -409,7 +409,10 @@ app.post('/api/contact', emailLimiter, async (req, res) => {
     
     // Fallback: Log the contact form submission for manual follow-up
     console.log('Contact form submission (SMTP failed):', {
-      name, email, subject, message,
+      name: req.body.name,
+      email: req.body.email, 
+      subject: req.body.subject,
+      message: req.body.message,
       timestamp: new Date().toISOString()
     });
     
