@@ -29,7 +29,11 @@ export const postsApi = {
   // Get all posts
   getAll: async (): Promise<BlogPost[]> => {
     const response = await api.get('posts');
-    return response.data;
+    const data = response.data;
+    if (!Array.isArray(data)) {
+      throw new Error('Invalid posts response');
+    }
+    return data;
   },
 
   // Get post by ID
