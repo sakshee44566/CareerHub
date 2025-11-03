@@ -151,8 +151,13 @@ VITE_API_URL=http://localhost:5000/api
 
 ## 🚀 Deployment
 
-### Using Docker (Recommended)
-The included Docker setup makes deployment easy:
+### Using Docker (for local/VPS)
+The repo contains Dockerfiles renamed to avoid interfering with Railway free hosting:
+
+- `Dockerfile.frontend` (was `Dockerfile`) for the frontend image
+- `backend/Dockerfile.local` (was `backend/Dockerfile`) for the backend image
+
+Rename them back to `Dockerfile` in their respective locations if you want to build with Docker. The compose file still works locally:
 
 ```bash
 # Build and start all services
